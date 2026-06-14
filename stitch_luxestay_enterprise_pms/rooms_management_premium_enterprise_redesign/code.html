@@ -1,0 +1,581 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Rooms Management | LuxePMS</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-primary-container": "#ebedff",
+                        "on-secondary-container": "#fffbff",
+                        "on-primary": "#ffffff",
+                        "surface": "#f7f9fb",
+                        "on-tertiary": "#ffffff",
+                        "inverse-surface": "#2d3133",
+                        "primary-fixed": "#dbe1ff",
+                        "inverse-on-surface": "#eff1f3",
+                        "surface-container-low": "#f2f4f6",
+                        "background": "#f7f9fb",
+                        "tertiary-fixed-dim": "#bac7e2",
+                        "inverse-primary": "#b5c4ff",
+                        "on-primary-fixed": "#00174c",
+                        "on-tertiary-container": "#e7eeff",
+                        "secondary-fixed": "#dce1ff",
+                        "surface-variant": "#e0e3e5",
+                        "on-surface-variant": "#424655",
+                        "surface-container-highest": "#e0e3e5",
+                        "surface-dim": "#d8dadc",
+                        "on-error-container": "#93000a",
+                        "surface-bright": "#f7f9fb",
+                        "secondary": "#0d4edc",
+                        "surface-container": "#eceef0",
+                        "surface-container-high": "#e6e8ea",
+                        "on-background": "#191c1e",
+                        "on-surface": "#191c1e",
+                        "tertiary-fixed": "#d6e3ff",
+                        "tertiary": "#47546b",
+                        "surface-tint": "#0052de",
+                        "error-container": "#ffdad6",
+                        "outline-variant": "#c3c5d8",
+                        "secondary-fixed-dim": "#b6c4ff",
+                        "error": "#ba1a1a",
+                        "on-secondary-fixed-variant": "#003bb0",
+                        "on-primary-fixed-variant": "#003dab",
+                        "outline": "#737687",
+                        "on-error": "#ffffff",
+                        "on-tertiary-fixed": "#0e1c30",
+                        "primary": "#0048c6",
+                        "on-tertiary-fixed-variant": "#3a475d",
+                        "surface-container-lowest": "#ffffff",
+                        "on-secondary": "#ffffff",
+                        "secondary-container": "#3869f6",
+                        "primary-fixed-dim": "#b5c4ff",
+                        "primary-container": "#0f5ef7",
+                        "tertiary-container": "#5f6c84",
+                        "on-secondary-fixed": "#00164f"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "16px",
+                        "2xl": "24px",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "sm": "8px",
+                        "md": "16px",
+                        "xs": "4px",
+                        "sidebar_width": "280px",
+                        "xl": "32px",
+                        "margin": "32px",
+                        "base": "4px",
+                        "2xl": "48px",
+                        "gutter": "24px",
+                        "lg": "24px"
+                    },
+                    "fontFamily": {
+                        "headline-sm": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "body-md": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "label-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "500"}],
+                        "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "label-md": ["13px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; background-color: #f7f9fb; }
+        .glass-sidebar { background: rgba(7, 21, 41, 0.95); backdrop-filter: blur(16px); }
+        .card-lift { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .card-lift:hover { transform: translateY(-4px); box-shadow: 0 20px 40px rgba(7, 21, 41, 0.08); }
+        .status-glow-available { box-shadow: 0 0 12px rgba(34, 197, 94, 0.4); }
+        .status-glow-occupied { box-shadow: 0 0 12px rgba(239, 68, 68, 0.4); }
+        .status-glow-maintenance { box-shadow: 0 0 12px rgba(245, 158, 11, 0.4); }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(0, 0, 0, 0.1); border-radius: 10px; }
+        .blue-gradient { background: linear-gradient(135deg, #0F5EF7 0%, #0A4DDB 100%); }
+    </style>
+</head>
+<body class="text-on-background">
+<!-- SideNavBar (Shared Component Identity) -->
+<aside class="fixed left-0 top-0 h-full w-[280px] glass-sidebar text-on-primary border-r border-white/10 z-[60] flex flex-col py-md px-sm shadow-2xl">
+<div class="mb-xl px-md">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl blue-gradient flex items-center justify-center shadow-lg">
+<span class="material-symbols-outlined text-white">apartment</span>
+</div>
+<div>
+<h1 class="text-headline-sm font-headline-sm font-bold text-on-primary leading-tight">Grand Horizon</h1>
+<p class="text-label-sm font-label-sm opacity-60">Luxury Collection</p>
+</div>
+</div>
+</div>
+<nav class="flex-1 space-y-2 overflow-y-auto custom-scrollbar px-2">
+<a class="flex items-center gap-3 px-4 py-3 text-on-primary/60 hover:text-on-primary hover:bg-white/5 transition-all duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-label-md text-label-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 bg-primary-container/20 text-on-primary border-r-4 border-primary shadow-[0_0_15px_rgba(15,94,247,0.4)] rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="grid_view">grid_view</span>
+<span class="font-label-md text-label-md">Room Map</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-primary/60 hover:text-on-primary hover:bg-white/5 transition-all duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="calendar_today">calendar_today</span>
+<span class="font-label-md text-label-md">Reservations</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-primary/60 hover:text-on-primary hover:bg-white/5 transition-all duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="countertops">countertops</span>
+<span class="font-label-md text-label-md">Front Desk</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-primary/60 hover:text-on-primary hover:bg-white/5 transition-all duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span class="font-label-md text-label-md">Analytics</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-primary/60 hover:text-on-primary hover:bg-white/5 transition-all duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="extension">extension</span>
+<span class="font-label-md text-label-md">Integrations</span>
+</a>
+</nav>
+<div class="mt-auto pt-md border-t border-white/10 space-y-2 px-2">
+<button class="w-full flex items-center gap-3 px-4 py-3 mb-4 rounded-xl blue-gradient text-white font-label-md text-label-md shadow-lg active:scale-95 transition-transform">
+<span class="material-symbols-outlined">add_circle</span>
+                New Booking
+            </button>
+<a class="flex items-center gap-3 px-4 py-2 text-on-primary/60 hover:text-on-primary transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="help_outline">help_outline</span>
+<span class="font-label-md text-label-md">Support</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 text-on-primary/60 hover:text-on-primary transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="build">build</span>
+<span class="font-label-md text-label-md">Maintenance</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="ml-[280px] min-h-screen flex flex-col">
+<!-- TopNavBar (Shared Component Identity) -->
+<header class="sticky top-0 right-0 w-full z-50 bg-surface/80 backdrop-blur-md border-b border-outline-variant/30 flex justify-between items-center h-16 px-lg shadow-sm">
+<div class="flex items-center gap-lg">
+<span class="font-headline-sm text-headline-sm font-black text-on-surface">LuxePMS</span>
+<div class="hidden md:flex gap-md">
+<a class="text-on-surface-variant font-label-md text-label-md hover:text-primary transition-colors" href="#">Properties</a>
+<a class="text-primary font-bold border-b-2 border-primary pb-1 font-label-md text-label-md" href="#">Reports</a>
+<a class="text-on-surface-variant font-label-md text-label-md hover:text-primary transition-colors" href="#">Activity</a>
+</div>
+</div>
+<div class="flex items-center gap-md flex-1 max-w-xl mx-xl">
+<div class="relative w-full">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="w-full bg-surface-container-low border-none rounded-full pl-10 pr-4 py-2 text-body-sm focus:ring-2 focus:ring-primary/20" placeholder="Search rooms, guests, or invoices..." type="text">
+</div>
+</div>
+<div class="flex items-center gap-md">
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors" data-icon="notifications">notifications</button>
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors" data-icon="settings">settings</button>
+<div class="h-8 w-px bg-outline-variant/30 mx-2"></div>
+<div class="flex items-center gap-3 cursor-pointer">
+<div class="text-right hidden sm:block">
+<p class="font-label-md text-label-md text-on-surface leading-none mb-1">Alex Rivieri</p>
+<p class="text-[10px] font-label-sm text-on-surface-variant uppercase tracking-wider">Property Manager</p>
+</div>
+<img alt="Manager Avatar" class="w-10 h-10 rounded-full border-2 border-white shadow-sm" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDYAoih7UCtDc_qwrRKIPGxjJDhLEiUtBGgA1nh8X7q8Y5iiDob5O7atSmaCvv0EwXxtuHJfyHZcHiz89qdDhDd3PZFTDNmavGFw_2hR_mPbVU3VijWt_F5tZp0hN9JFtFD-pBrQC5Ec7RxMUXaF3IOSt3554iyvtAjr8VNGcklHE08WXwQpVfdFbXg3CyiZ3ltjSWXoCGVkttpNArFkVwzL8rKod_rGBSIR1n3q7AGb2d9TRLE6G4HtHjqMGqWXcrbcKpQRvAGLxzw">
+</div>
+</div>
+</header>
+<!-- Content Canvas -->
+<div class="p-xl space-y-xl max-w-[1440px] mx-auto w-full">
+<!-- Breadcrumbs & Header -->
+<section class="space-y-sm">
+<nav class="flex text-label-sm font-label-sm text-on-surface-variant/60 gap-2 items-center">
+<span>Dashboard</span>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+<span class="text-on-surface-variant">Rooms</span>
+</nav>
+<div class="flex justify-between items-end">
+<div>
+<h2 class="font-display-lg text-headline-lg text-on-surface font-extrabold flex items-center gap-4">
+                            Rooms Management
+                            <div class="h-8 w-1.5 rounded-full blue-gradient"></div>
+</h2>
+<div class="flex gap-md mt-2 text-on-surface-variant font-label-md text-label-md">
+<span>Total Inventory: <strong class="text-on-surface">124</strong></span>
+<span class="text-outline-variant">•</span>
+<span>Available: <strong class="text-secondary">86</strong></span>
+<span class="text-outline-variant">•</span>
+<span>In Maintenance: <strong class="text-error">12</strong></span>
+</div>
+</div>
+<button class="px-lg py-3 blue-gradient text-white rounded-xl flex items-center gap-2 font-label-md text-label-md shadow-lg shadow-primary/20 hover:scale-[1.02] transition-all active:scale-95">
+<span class="material-symbols-outlined">add</span>
+                        Create Room
+                    </button>
+</div>
+</section>
+<!-- Executive Stats Bento -->
+<section class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-lg">
+<!-- Stat Card 1 -->
+<div class="bg-surface-container-lowest p-lg rounded-2xl border border-outline-variant/30 card-lift shadow-sm">
+<div class="flex justify-between mb-2">
+<div class="w-10 h-10 rounded-lg bg-primary/5 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary">analytics</span>
+</div>
+<span class="text-[11px] font-bold text-secondary bg-secondary/10 px-2 py-1 rounded-full h-fit">+12%</span>
+</div>
+<p class="text-label-sm font-label-sm text-on-surface-variant uppercase">Total Revenue</p>
+<p class="text-headline-md font-headline-md text-on-surface">₹2.4M</p>
+<div class="mt-4 h-1 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full blue-gradient w-[72%]"></div>
+</div>
+</div>
+<!-- Stat Card 2 -->
+<div class="bg-surface-container-lowest p-lg rounded-2xl border border-outline-variant/30 card-lift shadow-sm">
+<div class="flex justify-between mb-2">
+<div class="w-10 h-10 rounded-lg bg-green-50 flex items-center justify-center">
+<span class="material-symbols-outlined text-green-600">bed</span>
+</div>
+<span class="text-[11px] font-bold text-green-600 bg-green-100 px-2 py-1 rounded-full h-fit">+4%</span>
+</div>
+<p class="text-label-sm font-label-sm text-on-surface-variant uppercase">Occupancy</p>
+<p class="text-headline-md font-headline-md text-on-surface">84.2%</p>
+<div class="mt-4 h-1 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-green-500 w-[84%]"></div>
+</div>
+</div>
+<!-- Stat Card 3 -->
+<div class="bg-surface-container-lowest p-lg rounded-2xl border border-outline-variant/30 card-lift shadow-sm">
+<div class="flex justify-between mb-2">
+<div class="w-10 h-10 rounded-lg bg-orange-50 flex items-center justify-center">
+<span class="material-symbols-outlined text-orange-600">engineering</span>
+</div>
+<span class="text-[11px] font-bold text-orange-600 bg-orange-100 px-2 py-1 rounded-full h-fit">-2%</span>
+</div>
+<p class="text-label-sm font-label-sm text-on-surface-variant uppercase">Maintenance</p>
+<p class="text-headline-md font-headline-md text-on-surface">12 Units</p>
+<div class="mt-4 h-1 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-orange-500 w-[15%]"></div>
+</div>
+</div>
+<!-- More cards can go here -->
+<div class="bg-surface-container-lowest p-lg rounded-2xl border border-outline-variant/30 card-lift shadow-sm">
+<div class="flex justify-between mb-2">
+<div class="w-10 h-10 rounded-lg bg-purple-50 flex items-center justify-center">
+<span class="material-symbols-outlined text-purple-600">star</span>
+</div>
+<span class="text-[11px] font-bold text-purple-600 bg-purple-100 px-2 py-1 rounded-full h-fit">New</span>
+</div>
+<p class="text-label-sm font-label-sm text-on-surface-variant uppercase">Avg Rating</p>
+<p class="text-headline-md font-headline-md text-on-surface">4.8/5</p>
+<div class="mt-4 h-1 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-purple-500 w-[96%]"></div>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-lg rounded-2xl border border-outline-variant/30 card-lift shadow-sm">
+<div class="flex justify-between mb-2">
+<div class="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center">
+<span class="material-symbols-outlined text-blue-600">group</span>
+</div>
+<span class="text-[11px] font-bold text-blue-600 bg-blue-100 px-2 py-1 rounded-full h-fit">+8%</span>
+</div>
+<p class="text-label-sm font-label-sm text-on-surface-variant uppercase">New Guests</p>
+<p class="text-headline-md font-headline-md text-on-surface">342</p>
+<div class="mt-4 h-1 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-blue-500 w-[60%]"></div>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-lg rounded-2xl border border-outline-variant/30 card-lift shadow-sm">
+<div class="flex justify-between mb-2">
+<div class="w-10 h-10 rounded-lg bg-slate-50 flex items-center justify-center">
+<span class="material-symbols-outlined text-slate-600">receipt_long</span>
+</div>
+<span class="text-[11px] font-bold text-slate-600 bg-slate-100 px-2 py-1 rounded-full h-fit">+1%</span>
+</div>
+<p class="text-label-sm font-label-sm text-on-surface-variant uppercase">Bookings</p>
+<p class="text-headline-md font-headline-md text-on-surface">1,102</p>
+<div class="mt-4 h-1 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-slate-500 w-[45%]"></div>
+</div>
+</div>
+</section>
+<!-- Filters Section -->
+<section class="bg-surface-container-lowest p-md rounded-2xl border border-outline-variant/30 shadow-sm flex flex-col lg:flex-row gap-lg items-center">
+<div class="relative flex-1 w-full">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="w-full bg-surface-container-low border-outline-variant/20 rounded-xl pl-12 pr-4 py-3 text-body-md focus:ring-primary focus:border-primary" placeholder="Search by Room ID, Guest Name, or Type..." type="text">
+</div>
+<div class="flex gap-md w-full lg:w-auto">
+<select class="bg-surface-container-low border-outline-variant/20 rounded-xl px-4 py-3 text-label-md font-label-md focus:ring-primary">
+<option>All Status</option>
+<option>Available</option>
+<option>Occupied</option>
+<option>Maintenance</option>
+</select>
+<select class="bg-surface-container-low border-outline-variant/20 rounded-xl px-4 py-3 text-label-md font-label-md focus:ring-primary">
+<option>Room Type</option>
+<option>Deluxe Suite</option>
+<option>Ocean View</option>
+<option>Penthouse</option>
+</select>
+<button class="bg-surface-container-low border border-outline-variant/20 rounded-xl px-4 py-3 flex items-center gap-2 text-label-md font-label-md hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined text-[20px]">filter_list</span>
+                        More Filters
+                    </button>
+</div>
+</section>
+<!-- Room Inventory Grid -->
+<section class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-xl">
+<!-- Room Card 1 -->
+<div class="bg-surface-container-lowest rounded-2xl overflow-hidden border border-outline-variant/20 card-lift shadow-sm group">
+<div class="relative h-64">
+<img alt="Luxury Deluxe Suite" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" data-alt="A photograph of a high-end luxury deluxe hotel suite with a large king-sized bed featuring crisp white linens and plush navy blue pillows. Large floor-to-ceiling windows offer a breathtaking view of a modern city skyline at dusk. The room is decorated with warm wooden accents and contemporary art, creating an atmosphere of sophisticated comfort and executive luxury." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCDQtuE1b_rkK4Tc7ncpsgLMIORrTP_Fs7j0obvc7U6i75v7AzH0CColTsLbJQV12x0mG7Kykom-ppkh8mZLxzDJcu_DOyNh3zXz3ABR51WQgVA2VOwx8CubC6WgErpw0xQHQbodSTxcRUw9vwaAvz1iizzFdXnA8ipS0S-el58PAx9dHGIbKXSYR15syUABDxcNwxvGLL_9PvCe5lmceJALtvT7hcg2_SNaCzOjiGRpt30UCU5YcTDnvWxVBtv3eT0MH3AlCktQuxX">
+<div class="absolute inset-0 bg-gradient-to-t from-[#071529]/90 via-transparent to-transparent"></div>
+<div class="absolute top-4 right-4 bg-white/90 backdrop-blur-md px-3 py-1 rounded-lg shadow-lg">
+<span class="text-headline-sm font-headline-sm text-primary">₹4,500</span>
+<span class="text-[10px] text-on-surface-variant font-bold uppercase ml-1">/ Night</span>
+</div>
+<div class="absolute bottom-4 left-4 flex gap-2">
+<span class="bg-green-500 text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-widest status-glow-available">Available</span>
+<span class="bg-white/20 backdrop-blur-md text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-widest border border-white/20">Deluxe Suite</span>
+</div>
+</div>
+<div class="p-lg space-y-md">
+<div class="flex justify-between items-start">
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface">Room 402</h3>
+<div class="flex items-center gap-2 mt-1">
+<span class="material-symbols-outlined text-purple-600 text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="text-label-md font-label-md text-on-surface">4.9/5</span>
+<span class="text-on-surface-variant/40">•</span>
+<span class="text-label-md font-label-md text-on-surface-variant">2 Adults</span>
+</div>
+</div>
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors">more_vert</button>
+</div>
+<div class="flex gap-4 py-2 border-y border-outline-variant/10">
+<div class="flex items-center gap-1 text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px]">wifi</span>
+<span class="text-label-sm">WiFi</span>
+</div>
+<div class="flex items-center gap-1 text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px]">ac_unit</span>
+<span class="text-label-sm">AC</span>
+</div>
+<div class="flex items-center gap-1 text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px]">tv</span>
+<span class="text-label-sm">Smart TV</span>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div>
+<p class="text-[10px] font-bold text-on-surface-variant uppercase mb-1">Monthly Rev</p>
+<p class="text-body-md font-bold text-on-surface">₹124,000</p>
+</div>
+<div class="text-right">
+<p class="text-[10px] font-bold text-on-surface-variant uppercase mb-1">Bookings</p>
+<p class="text-body-md font-bold text-on-surface">24/30 days</p>
+</div>
+</div>
+<div class="flex gap-md pt-2">
+<button class="flex-1 py-3 blue-gradient text-white rounded-xl font-label-md text-label-md shadow-md shadow-primary/10 hover:brightness-110 active:scale-95 transition-all">Manage Room</button>
+<button class="px-md py-3 bg-surface-container border border-outline-variant/30 rounded-xl text-on-surface font-label-md text-label-md hover:bg-surface-container-high transition-all">Details</button>
+</div>
+</div>
+</div>
+<!-- Room Card 2 -->
+<div class="bg-surface-container-lowest rounded-2xl overflow-hidden border border-outline-variant/20 card-lift shadow-sm group">
+<div class="relative h-64">
+<img alt="Executive Penthouse" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" data-alt="An expansive executive penthouse hotel room with an open-concept living area. The room features high ceilings, dark hardwood floors, and a modern fireplace. A large dining table sits near a kitchen area with marble countertops. Elegant, recessed lighting provides a warm, luxury-grade glow. Outside, a private balcony overlooks a serene harbor during the golden hour." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBPR0gGcCx8tJBtwFAZeUkyAT1EnbVbLoiLO7KZhq4GEE46_InY51kWf3if-TA8cYIRxJwuj5AeXLAWTqJYkVU-KlgQHPb9DcE6vV-1Hlghr6BHr2qdtAeqa0CU614P5zb2sU08lZb3LNLMS-NEm3tHZeUpQ9--psIl24RM1b5Zz39m0ud6jVagoT84WOWmUkkXTBFVJaza50cXkE1jZx5uqyhhQguTp4uTtaMWwgKQBHsWt_7puFQ3IQBXdfgEmvAXNSdRBpLyllWo">
+<div class="absolute inset-0 bg-gradient-to-t from-[#071529]/90 via-transparent to-transparent"></div>
+<div class="absolute top-4 right-4 bg-white/90 backdrop-blur-md px-3 py-1 rounded-lg shadow-lg">
+<span class="text-headline-sm font-headline-sm text-primary">₹12,500</span>
+<span class="text-[10px] text-on-surface-variant font-bold uppercase ml-1">/ Night</span>
+</div>
+<div class="absolute bottom-4 left-4 flex gap-2">
+<span class="bg-red-500 text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-widest status-glow-occupied">Occupied</span>
+<span class="bg-white/20 backdrop-blur-md text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-widest border border-white/20">Penthouse</span>
+</div>
+</div>
+<div class="p-lg space-y-md">
+<div class="flex justify-between items-start">
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface">Room 1201</h3>
+<div class="flex items-center gap-2 mt-1">
+<span class="material-symbols-outlined text-purple-600 text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="text-label-md font-label-md text-on-surface">5.0/5</span>
+<span class="text-on-surface-variant/40">•</span>
+<span class="text-label-md font-label-md text-on-surface-variant">4 Adults</span>
+</div>
+</div>
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors">more_vert</button>
+</div>
+<div class="flex gap-4 py-2 border-y border-outline-variant/10">
+<div class="flex items-center gap-1 text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px]">pool</span>
+<span class="text-label-sm">Pool Access</span>
+</div>
+<div class="flex items-center gap-1 text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px]">hot_tub</span>
+<span class="text-label-sm">Spa</span>
+</div>
+<div class="flex items-center gap-1 text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px]">kitchen</span>
+<span class="text-label-sm">Bar</span>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div>
+<p class="text-[10px] font-bold text-on-surface-variant uppercase mb-1">Current Guest</p>
+<p class="text-body-md font-bold text-on-surface">John Smith</p>
+</div>
+<div class="text-right">
+<p class="text-[10px] font-bold text-on-surface-variant uppercase mb-1">Check-out</p>
+<p class="text-body-md font-bold text-on-surface">Tomorrow, 11 AM</p>
+</div>
+</div>
+<div class="flex gap-md pt-2">
+<button class="flex-1 py-3 blue-gradient text-white rounded-xl font-label-md text-label-md shadow-md shadow-primary/10 hover:brightness-110 active:scale-95 transition-all">Manage Room</button>
+<button class="px-md py-3 bg-surface-container border border-outline-variant/30 rounded-xl text-on-surface font-label-md text-label-md hover:bg-surface-container-high transition-all">Details</button>
+</div>
+</div>
+</div>
+<!-- Empty State / Add Card -->
+<div class="bg-surface-container/30 border-2 border-dashed border-outline-variant/30 rounded-2xl flex flex-col items-center justify-center p-xl text-center space-y-md group cursor-pointer hover:bg-surface-container/50 transition-all">
+<div class="w-16 h-16 rounded-full bg-white flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-primary text-headline-lg">add_home</span>
+</div>
+<div>
+<h4 class="font-headline-sm text-headline-sm text-on-surface">Add New Suite</h4>
+<p class="text-body-sm text-on-surface-variant mt-2 max-w-[200px]">Expand your inventory with a new premium suite or unit.</p>
+</div>
+<button class="px-lg py-2 bg-primary/10 text-primary border border-primary/20 rounded-lg font-label-md text-label-md hover:bg-primary/20 transition-all">
+                        Launch Setup
+                    </button>
+</div>
+</section>
+<!-- Analytics & Feeds Section -->
+<section class="grid grid-cols-1 lg:grid-cols-3 gap-xl">
+<!-- Analytics Widgets -->
+<div class="lg:col-span-2 space-y-xl">
+<div class="bg-surface-container-lowest p-lg rounded-2xl border border-outline-variant/20 shadow-sm">
+<div class="flex justify-between items-center mb-xl">
+<div>
+<h3 class="text-headline-sm font-headline-sm text-on-surface">Occupancy Trends</h3>
+<p class="text-label-sm font-label-sm text-on-surface-variant">Projected vs Actual (Last 30 Days)</p>
+</div>
+<div class="flex gap-2">
+<button class="px-3 py-1 rounded-md bg-surface-container text-label-sm font-label-sm">Daily</button>
+<button class="px-3 py-1 rounded-md text-label-sm font-label-sm text-on-surface-variant">Weekly</button>
+</div>
+</div>
+<div class="h-64 flex items-end gap-2 pb-6 px-4">
+<!-- Visualizing chart bars -->
+<div class="flex-1 blue-gradient rounded-t-lg h-[40%] relative group">
+<div class="absolute -top-10 left-1/2 -translate-x-1/2 bg-[#071529] text-white text-[10px] py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity">40%</div>
+</div>
+<div class="flex-1 blue-gradient rounded-t-lg h-[55%] relative group">
+<div class="absolute -top-10 left-1/2 -translate-x-1/2 bg-[#071529] text-white text-[10px] py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity">55%</div>
+</div>
+<div class="flex-1 blue-gradient rounded-t-lg h-[85%] relative group">
+<div class="absolute -top-10 left-1/2 -translate-x-1/2 bg-[#071529] text-white text-[10px] py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity">85%</div>
+</div>
+<div class="flex-1 blue-gradient rounded-t-lg h-[65%] relative group"></div>
+<div class="flex-1 blue-gradient rounded-t-lg h-[75%] relative group"></div>
+<div class="flex-1 blue-gradient rounded-t-lg h-[95%] relative group"></div>
+<div class="flex-1 blue-gradient rounded-t-lg h-[60%] relative group"></div>
+<div class="flex-1 blue-gradient rounded-t-lg h-[80%] relative group"></div>
+<div class="flex-1 blue-gradient rounded-t-lg h-[90%] relative group"></div>
+<div class="flex-1 blue-gradient rounded-t-lg h-[85%] relative group"></div>
+<div class="flex-1 blue-gradient rounded-t-lg h-[70%] relative group"></div>
+<div class="flex-1 blue-gradient rounded-t-lg h-[88%] relative group"></div>
+</div>
+<div class="flex justify-between text-label-sm font-label-sm text-on-surface-variant border-t border-outline-variant/10 pt-4">
+<span>01 May</span>
+<span>15 May</span>
+<span>30 May</span>
+</div>
+</div>
+</div>
+<!-- Side Feeds -->
+<div class="space-y-xl">
+<!-- Maintenance Feed -->
+<div class="bg-surface-container-lowest p-lg rounded-2xl border border-outline-variant/20 shadow-sm h-full">
+<div class="flex justify-between items-center mb-lg">
+<h3 class="text-headline-sm font-headline-sm text-on-surface">Maintenance</h3>
+<span class="material-symbols-outlined text-on-surface-variant">history</span>
+</div>
+<div class="space-y-md">
+<div class="flex gap-4 items-start p-3 hover:bg-surface-container-low rounded-xl transition-colors cursor-pointer">
+<div class="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-orange-600 text-[20px]">leak_add</span>
+</div>
+<div class="flex-1 min-w-0">
+<p class="font-label-md text-label-md text-on-surface truncate">Leak in Room 301</p>
+<p class="text-[11px] text-on-surface-variant">Started 2h ago • Assigned to Mike</p>
+</div>
+<div class="w-2 h-2 rounded-full bg-orange-500 mt-2"></div>
+</div>
+<div class="flex gap-4 items-start p-3 hover:bg-surface-container-low rounded-xl transition-colors cursor-pointer">
+<div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-blue-600 text-[20px]">ac_unit</span>
+</div>
+<div class="flex-1 min-w-0">
+<p class="font-label-md text-label-md text-on-surface truncate">AC Service Room 102</p>
+<p class="text-[11px] text-on-surface-variant">Scheduled for 4:00 PM</p>
+</div>
+<div class="w-2 h-2 rounded-full bg-blue-500 mt-2"></div>
+</div>
+<div class="flex gap-4 items-start p-3 hover:bg-surface-container-low rounded-xl transition-colors cursor-pointer">
+<div class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-green-600 text-[20px]">check_circle</span>
+</div>
+<div class="flex-1 min-w-0">
+<p class="font-label-md text-label-md text-on-surface truncate">Room 205 Cleaned</p>
+<p class="text-[11px] text-on-surface-variant">Completed 15m ago</p>
+</div>
+<div class="w-2 h-2 rounded-full bg-green-500 mt-2"></div>
+</div>
+</div>
+<button class="w-full mt-lg py-2 text-label-sm font-label-sm text-primary hover:bg-primary/5 rounded-lg border border-primary/20 transition-all">View All Work Orders</button>
+</div>
+</div>
+</section>
+</div>
+<!-- Footer Decoration -->
+<footer class="mt-auto p-lg text-center text-label-sm font-label-sm text-on-surface-variant/40">
+            © 2024 LuxePMS Enterprise Core. All Rights Reserved. Node: Horizon-01-Delhi
+        </footer>
+</main>
+<!-- Interactive Script for micro-interactions -->
+<script>
+        document.querySelectorAll('.card-lift').forEach(card => {
+            card.addEventListener('mousedown', () => {
+                card.style.transform = 'scale(0.98) translateY(0px)';
+            });
+            card.addEventListener('mouseup', () => {
+                card.style.transform = 'translateY(-4px)';
+            });
+        });
+    </script>
+</body></html>
