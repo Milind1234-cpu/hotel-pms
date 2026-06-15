@@ -77,7 +77,7 @@ export default function Login() {
             <div className="space-y-md">
               <div className="flex justify-between items-center">
                 <label className="font-label-md text-xs font-bold text-on-surface-variant/80 block uppercase custom-tracking-wide" htmlFor="password">Password</label>
-                <a className="font-label-md text-sm font-semibold text-primary hover:text-secondary transition-colors" href="#">Forgot password?</a>
+                <a className="font-label-md text-sm font-semibold text-primary hover:text-secondary transition-colors" href="/forgot-password">Forgot password?</a>
               </div>
               <div className="relative flex items-center group input-glow rounded-2xl transition-all border border-outline-variant/30 bg-white">
                 <span className="material-symbols-outlined absolute left-md text-outline group-focus-within:text-primary transition-colors text-xl">lock</span>
