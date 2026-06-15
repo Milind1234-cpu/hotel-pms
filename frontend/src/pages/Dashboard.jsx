@@ -70,9 +70,6 @@ export default function Dashboard() {
                     <div className="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center">
                       <MdBedroomParent size={24} />
                     </div>
-                    <span className="text-emerald-500 text-xs font-bold bg-emerald-50 px-2.5 py-1 rounded-full flex items-center gap-1">
-                      <span className="material-symbols-outlined !text-[14px]">trending_up</span> 2%
-                    </span>
                   </div>
                   <p className="text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-1">Total Rooms</p>
                   <p className="text-4xl heading-premium text-slate-900">{stats.totalRooms}</p>
@@ -108,9 +105,6 @@ export default function Dashboard() {
                     <div className="w-12 h-12 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center">
                       <MdBookOnline size={24} />
                     </div>
-                    <span className="text-primary text-xs font-bold bg-primary/5 px-2.5 py-1 rounded-full flex items-center gap-1">
-                      <span className="material-symbols-outlined !text-[14px]">trending_up</span> 8%
-                    </span>
                   </div>
                   <p className="text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-1">Total Bookings</p>
                   <p className="text-4xl heading-premium text-slate-900">{stats.totalBookings}</p>
@@ -134,9 +128,6 @@ export default function Dashboard() {
                     <div className="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
                       <MdReceipt size={24} />
                     </div>
-                    <span className="text-primary text-xs font-bold bg-primary/5 px-2.5 py-1 rounded-full flex items-center gap-1">
-                      <span className="material-symbols-outlined !text-[14px]">trending_up</span> 5%
-                    </span>
                   </div>
                   <p className="text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-1">Total Invoices</p>
                   <p className="text-4xl heading-premium text-slate-900">{stats.totalInvoices}</p>

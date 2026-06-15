@@ -32,7 +32,10 @@ export default function Invoice() {
 
   const formatDate = (dateStr) => {
     if (!dateStr) return '—'
-    return new Date(dateStr + 'T00:00:00').toLocaleDateString('en-IN', {
+    // issued_at is a full ISO datetime; check_in/check_out are date-only strings
+    const d = dateStr.includes('T') ? new Date(dateStr) : new Date(dateStr + 'T00:00:00')
+    if (isNaN(d.getTime())) return '—'
+    return d.toLocaleDateString('en-IN', {
       day: '2-digit',
       month: 'long',
       year: 'numeric',
@@ -41,7 +44,9 @@ export default function Invoice() {
 
   const formatDateShort = (dateStr) => {
     if (!dateStr) return '—'
-    return new Date(dateStr + 'T00:00:00').toLocaleDateString('en-IN', {
+    const d = dateStr.includes('T') ? new Date(dateStr) : new Date(dateStr + 'T00:00:00')
+    if (isNaN(d.getTime())) return '—'
+    return d.toLocaleDateString('en-IN', {
       day: '2-digit',
       month: 'short',
       year: '2-digit',
@@ -182,7 +187,8 @@ export default function Invoice() {
 
               {/* ── Toolbar (print:hidden) ── */}
               <div className="print:hidden flex gap-sm mb-2xl p-2 bg-white/60 rounded-[24px] border border-white/80">
-                <button className="flex-1 px-lg py-3 hover:bg-white rounded-[18px] text-[13px] font-bold text-on-surface-variant hover:text-primary transition-all flex items-center justify-center gap-sm">
+                <button className="flex-1 px-lg py-3 hover:bg-white rounded-[18px] text-[13px] font-bold text-on-surface-variant hover:text-primary transition-all flex items-center justify-center gap-sm"
+                  onClick={() => toast('PDF export coming soon.')}>
                   <span className="material-symbols-outlined text-[20px]">picture_as_pdf</span>
                   PDF
                 </button>
@@ -193,7 +199,8 @@ export default function Invoice() {
                   <span className="material-symbols-outlined text-[20px]">local_printshop</span>
                   PRINT
                 </button>
-                <button className="flex-1 px-lg py-3 hover:bg-white rounded-[18px] text-[13px] font-bold text-on-surface-variant hover:text-primary transition-all flex items-center justify-center gap-sm">
+                <button className="flex-1 px-lg py-3 hover:bg-white rounded-[18px] text-[13px] font-bold text-on-surface-variant hover:text-primary transition-all flex items-center justify-center gap-sm"
+                  onClick={() => toast('Email delivery coming soon.')}>
                   <span className="material-symbols-outlined text-[20px]">send</span>
                   EMAIL
                 </button>

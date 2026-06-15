@@ -4,6 +4,7 @@ from schemas import BookingOut, InvoiceOut
 from dependencies import get_current_user
 from models import User
 from beanie import PydanticObjectId
+from datetime import date
 
 router = APIRouter()
 
@@ -24,6 +25,12 @@ async def check_in(booking_id: str, current_user: User = Depends(get_current_use
         raise HTTPException(
             status_code=400,
             detail=f"Cannot check in. Booking status is '{booking.status}'"
+        )
+
+    if date.today() < booking.check_in_date:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Too early to check in. Check-in date is {booking.check_in_date}"
         )
 
     booking.status = "Checked In"
@@ -90,7 +97,7 @@ async def check_out(booking_id: str, current_user: User = Depends(get_current_us
         booking_id=str(booking.id),
         guest_name=booking.guest_name,
         room_number=room.room_number,
-        room_type=room.room_type,
+        room_type=room.room_type.value,
         check_in_date=booking.check_in_date,
         check_out_date=booking.check_out_date,
         total_nights=total_nights,

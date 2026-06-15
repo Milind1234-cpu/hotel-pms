@@ -5,6 +5,7 @@ from models import Booking, Room
 from schemas import BookingCreate, BookingOut
 from dependencies import get_current_user
 from models import User
+from beanie import PydanticObjectId
 
 router = APIRouter()
 
@@ -72,7 +73,11 @@ async def get_bookings_by_room(room_id: str, current_user: User = Depends(get_cu
 # ─── GET SINGLE BOOKING ───────────────────────────────────────
 @router.get("/{booking_id}", response_model=BookingOut)
 async def get_booking(booking_id: str, current_user: User = Depends(get_current_user)):
-    booking = await Booking.get(booking_id)
+    try:
+        obj_id = PydanticObjectId(booking_id)
+    except Exception:
+        raise HTTPException(status_code=400, detail="Invalid booking ID")
+    booking = await Booking.get(obj_id)
     if not booking:
         raise HTTPException(status_code=404, detail="Booking not found")
     return BookingOut(
@@ -106,7 +111,11 @@ async def create_booking(data: BookingCreate, current_user: User = Depends(get_c
         )
 
     # Check room exists
-    room = await Room.get(data.room_id)
+    try:
+        room_obj_id = PydanticObjectId(data.room_id)
+    except Exception:
+        raise HTTPException(status_code=400, detail="Invalid room ID")
+    room = await Room.get(room_obj_id)
     if not room:
         raise HTTPException(status_code=404, detail="Room not found")
 
@@ -157,7 +166,11 @@ async def create_booking(data: BookingCreate, current_user: User = Depends(get_c
 # ─── CANCEL BOOKING ───────────────────────────────────────────
 @router.put("/{booking_id}/cancel", response_model=BookingOut)
 async def cancel_booking(booking_id: str, current_user: User = Depends(get_current_user)):
-    booking = await Booking.get(booking_id)
+    try:
+        obj_id = PydanticObjectId(booking_id)
+    except Exception:
+        raise HTTPException(status_code=400, detail="Invalid booking ID")
+    booking = await Booking.get(obj_id)
     if not booking:
         raise HTTPException(status_code=404, detail="Booking not found")
 
@@ -172,7 +185,11 @@ async def cancel_booking(booking_id: str, current_user: User = Depends(get_curre
     await booking.save()
 
     # Only set room back to Available if no other active bookings exist for it
-    room = await Room.get(booking.room_id)
+    try:
+        room_obj_id = PydanticObjectId(booking.room_id)
+    except Exception:
+        room_obj_id = None
+    room = await Room.get(room_obj_id) if room_obj_id else None
     if room and room.status != "Maintenance":
         other_active = await Booking.find(
             Booking.room_id == booking.room_id,

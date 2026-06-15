@@ -497,7 +497,7 @@ export default function Bookings() {
                     className="w-full bg-surface-container-low border border-outline-variant/40 rounded-lg pl-10 pr-4 py-2.5 text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40 transition-all appearance-none"
                   >
                     <option value="">— Select a room —</option>
-                    {rooms.map((r) => (
+                    {allRooms.filter(r => r.status === 'Available').map((r) => (
                       <option key={r.id} value={r.id}>
                         Room {r.room_number} — {r.room_type} — ₹{r.price_per_night}/night
                       </option>

@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, Field
 from typing import Optional
 from datetime import date, datetime
 from enum import Enum
@@ -27,7 +27,7 @@ class BookingStatus(str, Enum):
 class UserCreate(BaseModel):
     name: str
     email: EmailStr
-    password: str
+    password: str = Field(min_length=8)
     role: UserRole = UserRole.staff
 
 class UserOut(BaseModel):
@@ -49,13 +49,13 @@ class LoginRequest(BaseModel):
 class RoomCreate(BaseModel):
     room_number: str
     room_type: RoomType
-    price_per_night: float
+    price_per_night: float = Field(gt=0)
     status: RoomStatus = RoomStatus.available
     description: Optional[str] = None
 
 class RoomUpdate(BaseModel):
     room_type: Optional[RoomType] = None
-    price_per_night: Optional[float] = None
+    price_per_night: Optional[float] = Field(default=None, gt=0)
     status: Optional[RoomStatus] = None
     description: Optional[str] = None
 

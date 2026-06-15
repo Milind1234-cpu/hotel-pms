@@ -2,8 +2,9 @@ from fastapi import APIRouter, HTTPException, Depends
 from typing import List
 from models import Room
 from schemas import RoomCreate, RoomUpdate, RoomOut
-from dependencies import get_current_user
+from dependencies import get_current_user, require_admin
 from models import User
+from beanie import PydanticObjectId
 
 router = APIRouter()
 
@@ -45,7 +46,11 @@ async def get_available_rooms(current_user: User = Depends(get_current_user)):
 # ─── GET SINGLE ROOM ─────────────────────────────────────────
 @router.get("/{room_id}", response_model=RoomOut)
 async def get_room(room_id: str, current_user: User = Depends(get_current_user)):
-    room = await Room.get(room_id)
+    try:
+        obj_id = PydanticObjectId(room_id)
+    except Exception:
+        raise HTTPException(status_code=400, detail="Invalid room ID")
+    room = await Room.get(obj_id)
     if not room:
         raise HTTPException(status_code=404, detail="Room not found")
     return RoomOut(
@@ -88,7 +93,11 @@ async def create_room(data: RoomCreate, current_user: User = Depends(get_current
 # ─── UPDATE ROOM ─────────────────────────────────────────────
 @router.put("/{room_id}", response_model=RoomOut)
 async def update_room(room_id: str, data: RoomUpdate, current_user: User = Depends(get_current_user)):
-    room = await Room.get(room_id)
+    try:
+        obj_id = PydanticObjectId(room_id)
+    except Exception:
+        raise HTTPException(status_code=400, detail="Invalid room ID")
+    room = await Room.get(obj_id)
     if not room:
         raise HTTPException(status_code=404, detail="Room not found")
 
@@ -111,9 +120,13 @@ async def update_room(room_id: str, data: RoomUpdate, current_user: User = Depen
 
 # ─── DELETE ROOM ─────────────────────────────────────────────
 @router.delete("/{room_id}")
-async def delete_room(room_id: str, current_user: User = Depends(get_current_user)):
+async def delete_room(room_id: str, current_user: User = Depends(require_admin)):
     from models import Booking
-    room = await Room.get(room_id)
+    try:
+        obj_id = PydanticObjectId(room_id)
+    except Exception:
+        raise HTTPException(status_code=400, detail="Invalid room ID")
+    room = await Room.get(obj_id)
     if not room:
         raise HTTPException(status_code=404, detail="Room not found")
 

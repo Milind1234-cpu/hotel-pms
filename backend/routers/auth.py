@@ -2,6 +2,7 @@ from fastapi import APIRouter, HTTPException, Depends
 from jose import jwt
 from datetime import datetime, timedelta, timezone
 from models import User
+from models import UserRole
 from schemas import UserCreate, UserOut, Token, LoginRequest
 from config import settings
 from dependencies import get_current_user
@@ -35,7 +36,7 @@ async def register(data: UserCreate):
         name=data.name,
         email=data.email,
         hashed_password=hash_password(data.password),
-        role=data.role
+        role=UserRole.staff  # always staff on self-registration
     )
     await user.insert()
 

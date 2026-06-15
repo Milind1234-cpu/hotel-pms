@@ -9,7 +9,6 @@ export default function Register() {
     name: '',
     email: '',
     password: '',
-    role: 'staff',
   })
   const [loading, setLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
@@ -24,7 +23,7 @@ export default function Register() {
     e.preventDefault()
     setLoading(true)
     try {
-      const res = await api.post('/auth/register', form)
+      const res = await api.post('/auth/register', { ...form, role: 'staff' })
       login(res.data.access_token, res.data.user)
       toast.success('Account created successfully!')
       navigate('/dashboard')
@@ -124,27 +123,6 @@ export default function Register() {
                     {showPassword ? 'visibility_off' : 'visibility'}
                   </span>
                 </button>
-              </div>
-            </div>
-
-            {/* Role */}
-            <div className="space-y-md">
-              <label className="font-label-md text-xs font-bold text-on-surface-variant/80 block uppercase custom-tracking-wide" htmlFor="role">
-                Role
-              </label>
-              <div className="relative flex items-center group input-glow rounded-2xl transition-all border border-outline-variant/30 bg-white">
-                <span className="material-symbols-outlined absolute left-md text-outline group-focus-within:text-primary transition-colors text-xl">badge</span>
-                <select
-                  className="w-full pl-12 pr-md py-4 bg-transparent border-none focus:ring-0 rounded-2xl font-body-md text-on-surface appearance-none cursor-pointer"
-                  id="role"
-                  name="role"
-                  value={form.role}
-                  onChange={handleChange}
-                >
-                  <option value="staff">Staff</option>
-                  <option value="admin">Admin</option>
-                </select>
-                <span className="material-symbols-outlined absolute right-md text-outline pointer-events-none text-xl">expand_more</span>
               </div>
             </div>
 
