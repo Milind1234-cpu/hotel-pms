@@ -120,7 +120,7 @@ async def update_room(room_id: str, data: RoomUpdate, current_user: User = Depen
 
 # ─── DELETE ROOM ─────────────────────────────────────────────
 @router.delete("/{room_id}")
-async def delete_room(room_id: str, current_user: User = Depends(require_admin)):
+async def delete_room(room_id: str, current_user: User = Depends(get_current_user)):
     from models import Booking
     try:
         obj_id = PydanticObjectId(room_id)

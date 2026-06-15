@@ -4,6 +4,7 @@ from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from models import User
 from config import settings
+from beanie import PydanticObjectId
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
@@ -25,7 +26,12 @@ async def get_current_user(token: str = Depends(oauth2_scheme)) -> User:
     except JWTError:
         raise credentials_exception
 
-    user = await User.get(user_id)
+    try:
+        obj_id = PydanticObjectId(user_id)
+    except Exception:
+        raise credentials_exception
+
+    user = await User.get(obj_id)
     if user is None:
         raise credentials_exception
     return user

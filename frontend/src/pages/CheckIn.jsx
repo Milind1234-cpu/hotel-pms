@@ -30,7 +30,7 @@ export default function CheckIn() {
 
   const getRoomNumber = (roomId) => {
     const room = rooms.find(r => r.id === roomId)
-    return room ? room.room_number : roomId
+    return room ? room.room_number : 'Unknown'
   }
 
   const handleCheckIn = async (id) => {

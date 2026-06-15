@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, Depends
 from typing import List
 from datetime import date
-from models import Booking, Room
+from models import Booking, Room, BookingStatus
 from schemas import BookingCreate, BookingOut
 from dependencies import get_current_user
 from models import User
@@ -14,8 +14,8 @@ router = APIRouter()
 async def is_room_available(room_id: str, check_in: date, check_out: date, exclude_booking_id: str = None) -> bool:
     bookings = await Booking.find(
         Booking.room_id == room_id,
-        Booking.status != "Cancelled",
-        Booking.status != "Checked Out"
+        Booking.status != BookingStatus.cancelled,
+        Booking.status != BookingStatus.checked_out
     ).to_list()
 
     for b in bookings:
@@ -180,24 +180,33 @@ async def cancel_booking(booking_id: str, current_user: User = Depends(get_curre
             detail=f"Cannot cancel a booking that is already {booking.status}"
         )
 
+    # If guest was checked in, reset room to Available immediately
+    was_checked_in = booking.status == "Checked In"
+
     # Cancel the booking
     booking.status = "Cancelled"
     await booking.save()
 
-    # Only set room back to Available if no other active bookings exist for it
+    # Reset room status
     try:
         room_obj_id = PydanticObjectId(booking.room_id)
     except Exception:
         room_obj_id = None
     room = await Room.get(room_obj_id) if room_obj_id else None
     if room and room.status != "Maintenance":
-        other_active = await Booking.find(
-            Booking.room_id == booking.room_id,
-            Booking.status == "Checked In"
-        ).to_list()
-        if not other_active:
+        if was_checked_in:
+            # Guest was physically in the room — free it immediately
             room.status = "Available"
             await room.save()
+        else:
+            # Only reset if no other active check-in exists for this room
+            other_active = await Booking.find(
+                Booking.room_id == booking.room_id,
+                Booking.status == "Checked In"
+            ).to_list()
+            if not other_active:
+                room.status = "Available"
+                await room.save()
 
     return BookingOut(
         id=str(booking.id),

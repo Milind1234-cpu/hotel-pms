@@ -31,6 +31,9 @@ export default function App() {
 
           {/* Default redirect */}
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
+
+          {/* 404 catch-all */}
+          <Route path="*" element={<Navigate to="/dashboard" replace />} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>

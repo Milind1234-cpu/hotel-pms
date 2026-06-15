@@ -77,8 +77,9 @@ async def check_out(booking_id: str, current_user: User = Depends(get_current_us
     if not room:
         raise HTTPException(status_code=404, detail="Room not found")
 
-    # Calculate bill
-    total_nights = (booking.check_out_date - booking.check_in_date).days
+    # Calculate bill — use actual checkout date (today) if checking out early
+    actual_checkout = min(booking.check_out_date, date.today())
+    total_nights = (actual_checkout - booking.check_in_date).days
     if total_nights <= 0:
         total_nights = 1
     room_charges = total_nights * room.price_per_night
