@@ -118,9 +118,10 @@ async def delete_room(room_id: str, current_user: User = Depends(get_current_use
         raise HTTPException(status_code=404, detail="Room not found")
 
     # Block deletion if there are active bookings for this room
+    from beanie.operators import In
     active_bookings = await Booking.find(
         Booking.room_id == room_id,
-        Booking.status.in_(["Confirmed", "Checked In"])
+        In(Booking.status, ["Confirmed", "Checked In"])
     ).to_list()
     if active_bookings:
         raise HTTPException(
