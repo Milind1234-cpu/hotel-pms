@@ -94,6 +94,9 @@ class InvoiceOut(BaseModel):
     id: str
     booking_id: str
     guest_name: str
+    guest_email: str = ""
+    guest_phone: Optional[str] = None
+    num_guests: int = 1
     room_number: str
     room_type: str
     check_in_date: date
@@ -103,4 +106,4 @@ class InvoiceOut(BaseModel):
     room_charges: float
     tax: float
     total_amount: float
-    issued_at: datetime# Pydantic schemas
+    issued_at: datetime
