@@ -3,6 +3,7 @@ import { MdAdd, MdEdit, MdDelete, MdClose } from 'react-icons/md'
 import Layout from '../components/Layout'
 import api from '../api/axios'
 import toast from 'react-hot-toast'
+import { useAuth } from '../context/AuthContext'
 
 export default function Rooms() {
   const [rooms, setRooms] = useState([])
@@ -20,6 +21,9 @@ export default function Rooms() {
     status: 'Available',
     description: ''
   })
+
+  const { user } = useAuth()
+  const isAdmin = user?.role === 'admin'
 
   const fetchRooms = async () => {
     try {
@@ -162,7 +166,7 @@ export default function Rooms() {
             </div>
             <button
               onClick={openAddModal}
-              className="px-lg py-3 blue-gradient text-white rounded-xl flex items-center gap-2 font-label-md text-label-md shadow-lg hover:scale-[1.02] transition-all active:scale-95"
+              className={`px-lg py-3 blue-gradient text-white rounded-xl flex items-center gap-2 font-label-md text-label-md shadow-lg hover:scale-[1.02] transition-all active:scale-95 ${!isAdmin ? 'hidden' : ''}`}
             >
               <MdAdd size={20} />
               Create Room
@@ -421,26 +425,37 @@ export default function Rooms() {
 
                   {/* Action Buttons */}
                   <div className="flex gap-md pt-2">
-                    <button
-                      onClick={() => openEditModal(room)}
-                      className="flex-1 py-2.5 flex items-center justify-center gap-2 blue-gradient text-white rounded-xl font-label-md text-label-md shadow-md hover:brightness-110 active:scale-95 transition-all"
-                    >
-                      <MdEdit size={16} />
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => handleDelete(room.id)}
-                      className="px-md py-2.5 flex items-center justify-center gap-2 bg-error/10 hover:bg-error/20 text-error border border-error/20 rounded-xl font-label-md text-label-md transition-all"
-                    >
-                      <MdDelete size={16} />
-                      Delete
-                    </button>
+                    {isAdmin && (
+                      <button
+                        onClick={() => openEditModal(room)}
+                        className="flex-1 py-2.5 flex items-center justify-center gap-2 blue-gradient text-white rounded-xl font-label-md text-label-md shadow-md hover:brightness-110 active:scale-95 transition-all"
+                      >
+                        <MdEdit size={16} />
+                        Edit
+                      </button>
+                    )}
+                    {isAdmin && (
+                      <button
+                        onClick={() => handleDelete(room.id)}
+                        className="px-md py-2.5 flex items-center justify-center gap-2 bg-error/10 hover:bg-error/20 text-error border border-error/20 rounded-xl font-label-md text-label-md transition-all"
+                      >
+                        <MdDelete size={16} />
+                        Delete
+                      </button>
+                    )}
+                    {!isAdmin && (
+                      <div className="flex-1 py-2.5 flex items-center justify-center gap-2 bg-surface-container text-on-surface-variant/50 rounded-xl font-label-md text-label-md border border-outline-variant/20 text-[12px]">
+                        <span className="material-symbols-outlined text-[14px]">visibility</span>
+                        View Only
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
             ))}
 
-            {/* Add Room Card (empty state / CTA) */}
+            {/* Add Room Card - admin only */}
+            {isAdmin && (
             <div
               onClick={openAddModal}
               className="bg-surface-container/30 border-2 border-dashed border-outline-variant/30 rounded-2xl flex flex-col items-center justify-center p-xl text-center space-y-md group cursor-pointer hover:bg-surface-container/50 transition-all"
@@ -459,6 +474,7 @@ export default function Rooms() {
                 Create Room
               </button>
             </div>
+            )}
           </section>
         )}
 

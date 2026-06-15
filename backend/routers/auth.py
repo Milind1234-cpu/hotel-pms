@@ -202,3 +202,55 @@ async def reset_password(data: dict):
     await user.save()
 
     return {"message": "Password reset successfully. You can now log in."}
+
+
+# ─── SEED FIRST ADMIN (one-time only) ────────────────────────
+@router.post("/seed-admin", status_code=201)
+async def seed_admin(data: dict):
+    """
+    Creates the first admin account. Only works if NO admin exists yet.
+    Once an admin exists, this endpoint permanently returns 403.
+    """
+    # Check if any admin already exists
+    existing_admin = await User.find_one(User.role == UserRole.admin)
+    if existing_admin:
+        raise HTTPException(
+            status_code=403,
+            detail="An admin account already exists. Use the admin panel to create more admins."
+        )
+
+    name = data.get("name", "").strip()
+    email = data.get("email", "").strip().lower()
+    password = data.get("password", "")
+
+    if not name or not email or not password:
+        raise HTTPException(status_code=400, detail="name, email and password are required")
+    if len(password) < 8:
+        raise HTTPException(status_code=400, detail="Password must be at least 8 characters")
+
+    existing_user = await User.find_one(User.email == email)
+    if existing_user:
+        # If user exists as staff, promote them to admin
+        existing_user.role = UserRole.admin
+        await existing_user.save()
+        token = create_access_token(str(existing_user.id))
+        return Token(
+            access_token=token,
+            token_type="bearer",
+            user=UserOut(id=str(existing_user.id), name=existing_user.name, email=existing_user.email, role=existing_user.role)
+        )
+
+    user = User(
+        name=name,
+        email=email,
+        hashed_password=hash_password(password),
+        role=UserRole.admin
+    )
+    await user.insert()
+
+    token = create_access_token(str(user.id))
+    return Token(
+        access_token=token,
+        token_type="bearer",
+        user=UserOut(id=str(user.id), name=user.name, email=user.email, role=user.role)
+    )

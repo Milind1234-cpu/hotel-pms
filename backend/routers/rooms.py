@@ -65,7 +65,7 @@ async def get_room(room_id: str, current_user: User = Depends(get_current_user))
 
 # ─── CREATE ROOM ─────────────────────────────────────────────
 @router.post("/", response_model=RoomOut, status_code=201)
-async def create_room(data: RoomCreate, current_user: User = Depends(get_current_user)):
+async def create_room(data: RoomCreate, current_user: User = Depends(require_admin)):
     # Check if room number already exists
     existing = await Room.find_one(Room.room_number == data.room_number)
     if existing:
@@ -92,7 +92,7 @@ async def create_room(data: RoomCreate, current_user: User = Depends(get_current
 
 # ─── UPDATE ROOM ─────────────────────────────────────────────
 @router.put("/{room_id}", response_model=RoomOut)
-async def update_room(room_id: str, data: RoomUpdate, current_user: User = Depends(get_current_user)):
+async def update_room(room_id: str, data: RoomUpdate, current_user: User = Depends(require_admin)):
     try:
         obj_id = PydanticObjectId(room_id)
     except Exception:
@@ -120,7 +120,7 @@ async def update_room(room_id: str, data: RoomUpdate, current_user: User = Depen
 
 # ─── DELETE ROOM ─────────────────────────────────────────────
 @router.delete("/{room_id}")
-async def delete_room(room_id: str, current_user: User = Depends(get_current_user)):
+async def delete_room(room_id: str, current_user: User = Depends(require_admin)):
     from models import Booking
     try:
         obj_id = PydanticObjectId(room_id)
