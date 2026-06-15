@@ -92,7 +92,8 @@ export default function Rooms() {
       toast.success('Room deleted successfully!')
       fetchRooms()
     } catch (err) {
-      toast.error(err.response?.data?.detail || 'Delete failed')
+      const msg = err.response?.data?.detail || err.message || 'Delete failed'
+      toast.error(msg, { duration: 5000 })
     }
   }
 
