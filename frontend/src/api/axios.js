@@ -1,10 +1,15 @@
 import axios from 'axios'
 
+const BASE_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'
+console.log('API Base URL:', BASE_URL)
+
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000',
+  baseURL: BASE_URL,
+  headers: {
+    'Content-Type': 'application/json',
+  },
 })
 
-// Automatically attach token to every request
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('token')
   if (token) {
@@ -13,7 +18,6 @@ api.interceptors.request.use((config) => {
   return config
 })
 
-// If token expires, redirect to login
 api.interceptors.response.use(
   (response) => response,
   (error) => {
